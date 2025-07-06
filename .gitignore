@@ -1,1 +1,3 @@
-/demo/venv
+/demo/**/venv
+/app/**/venv
+/**/data

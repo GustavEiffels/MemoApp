@@ -13,5 +13,11 @@ source venv/bin/activate
 - memo 앱을 만들기전에 lexrank 패키지 익히기 위함 
 - nltk, lexrank, konlpy
 
+```
+pip install -r requirements.txt
+```
 
-
+### fast api load 
+```
+uvicorn app:app --reload
+```
