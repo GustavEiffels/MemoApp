@@ -4,17 +4,10 @@ from contextlib import contextmanager, asynccontextmanager
 from sqlalchemy import text 
 import models  
 
-from domain.member.member_repository import MemberRepositoryInterface
-from domain.member.member_schema import MemberCreate
-from domain.member.member import Member
-from infra.member.sqlalchemy_member_repository import SQLAlchemyMemberRepository
-from sqlalchemy.orm import Session
-from database import get_db
-from typing import Annotated
+from routers import member_router 
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+async def initialize_database():
     print("애플리케이션 시작 중... DB 연결 확인 시도.")
     try:
         with engine_conn.get_connection() as conn:
@@ -31,27 +24,14 @@ async def lifespan(app: FastAPI):
         print(f"DB 연결 실패: {e}")
         raise RuntimeError(f"데이터베이스 연결 오류로 애플리케이션 시작 실패: {e}")
 
+# --- lifespan 함수 재정의 ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await initialize_database()
     yield
-
     print("애플리케이션 종료 중...")
     engine_conn.engine.dispose()
     print("DB 엔진 연결 풀 닫힘.")
 
 app = FastAPI(lifespan=lifespan)
-
-
-def get_member_repository(db: Session = Depends(get_db)) -> MemberRepositoryInterface:
-    return SQLAlchemyMemberRepository(db) 
-
-
-
-@app.get('/test')
-def create_test(
-    member_repo: Annotated[MemberRepositoryInterface, Depends(get_member_repository)]
-):
-    new_member = Member(
-        email='test@naver.com',
-        password_hash='Qwer!@34!',
-    )
-
-    member_repo.add(new_member)
+app.include_router(member_router.router)
