@@ -7,6 +7,9 @@ class ApplicationException(Exception):
         self.message = message
         self.details = details
 
+class InvalidError(ApplicationException):
+    pass
+
 class MemberAlreadyExistsError(ApplicationException):
     pass 
 

@@ -6,6 +6,7 @@ from sqlalchemy import text
 import models  
 
 from routers import member_router 
+from routers import memo_router
 from domain.exceptions import MemberAlreadyExistsError, ApplicationException, ValidationError
 from common.response_schemas import ApiResponse
 
@@ -38,6 +39,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(member_router.router)
+app.include_router(memo_router.router)
 
 
 # -- Exception
