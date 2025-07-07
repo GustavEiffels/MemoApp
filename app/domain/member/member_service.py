@@ -1,6 +1,7 @@
 from domain.member.member import Member
 from domain.member.member_schema import MemberCreate
 from domain.member.member_repository import MemberRepositoryInterface
+from domain.exceptions import ValidationError, MemberAlreadyExistsError
 
 class MemberService:
     def __init__(self,repository:MemberRepositoryInterface):
@@ -11,7 +12,7 @@ class MemberService:
         existing_member = self.repo.find_by_email(command.email)
 
         if existing_member:
-            raise ValueError(f"Email '{command.email}' already exists ")  
+            raise MemberAlreadyExistsError(email=command.email, message=f"Email '{command.email}' already exists.")  
 
         
         new_member = Member(

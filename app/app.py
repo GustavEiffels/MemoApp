@@ -1,10 +1,13 @@
-from fastapi import FastAPI, Depends, Path, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status, Request # Request 임포트 추가
+from fastapi.responses import JSONResponse 
 from database import engine_conn, Base
 from contextlib import contextmanager, asynccontextmanager
 from sqlalchemy import text 
 import models  
 
 from routers import member_router 
+from domain.exceptions import MemberAlreadyExistsError, ApplicationException, ValidationError
+from common.response_schemas import ApiResponse
 
 
 async def initialize_database():
@@ -35,3 +38,57 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(member_router.router)
+
+
+# -- Exception
+@app.exception_handler(ApplicationException) # 모든 커스텀 애플리케이션 예외의 기본 처리기
+async def application_exception_handler(request: Request, exc: ApplicationException):
+    """
+    ApplicationException의 하위 예외들이 특정 핸들러로 잡히지 않을 때의 기본 처리기.
+    """
+    print(f"Unhandled ApplicationException caught: {exc.message} - Details: {exc.details}")
+    api_response = ApiResponse(
+        success=False,
+        message="An unexpected application error occurred.",
+        error="Internal Server Error",
+        code="UNEXPECTED_APPLICATION_ERROR",
+        data=None
+    )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content=api_response.model_dump(exclude_none=True),
+    )
+
+
+
+@app.exception_handler(ValidationError) # 모든 커스텀 애플리케이션 예외의 기본 처리기
+async def application_exception_handler(request: Request, exc: ValidationError):
+    print(f"Unhandled ApplicationException caught: {exc.message} - Details: {exc.details}")
+    api_response = ApiResponse(
+        success=False,
+        message="An unexpected application error occurred.",
+        error="Internal Server Error",
+        code="UNEXPECTED_APPLICATION_ERROR",
+        data=None
+    )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content=api_response.model_dump(exclude_none=True),
+    )
+
+@app.exception_handler(MemberAlreadyExistsError)
+async def member_already_exists_exception_handler(request: Request, exc: MemberAlreadyExistsError):
+    """
+    MemberAlreadyExistsError 발생 시 409 CONFLICT 응답을 반환합니다.
+    """
+    api_response = ApiResponse(
+        success=False,
+        message=exc.message,
+        error="Resource Conflict",
+        code="MEMBER_ALREADY_EXISTS",
+        data=None
+    )
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content=api_response.model_dump(exclude_none=True),
+    )
