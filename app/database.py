@@ -1,8 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from contextlib import contextmanager 
+from contextlib import contextmanager
+from sqlalchemy.ext.declarative import declarative_base 
 
 DB_URL = 'mysql+pymysql://myuser:mypassword@localhost:33066/mydb'
+
+
+Base = declarative_base()
+
 
 class EngineConn:
 
@@ -16,9 +21,9 @@ class EngineConn:
         try:
             yield session
             session.commit()
-        except Exception:
+        except Exception as e:
             session.rollback()
-            raise 
+            raise e 
         finally:
             session.close() 
 
@@ -29,3 +34,15 @@ class EngineConn:
             yield conn
         finally:
             conn.close()
+
+
+engine_conn = EngineConn()
+
+
+def get_db():
+    with engine_conn.get_session() as db: 
+        yield db
+
+def get_raw_db_connection():
+    with engine_conn.get_connection() as conn:
+        yield conn

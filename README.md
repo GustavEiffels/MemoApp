@@ -4,7 +4,8 @@
 python -m venv venv
 
 ## mac
-source venv/bin/activate
+source venv/bin/activate  // mac
+.\venv\Scripts\Activate.ps1  // window
 ```
 
 ## Branch
@@ -14,7 +15,7 @@ source venv/bin/activate
 - nltk, lexrank, konlpy
 
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt // mac 
 ```
 
 ### fast api load 
