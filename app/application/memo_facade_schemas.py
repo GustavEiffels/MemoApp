@@ -17,8 +17,6 @@ class Criteria:
                 self.summary,
                 self.member_id
                 )
-            
-
 
 
 class Result:

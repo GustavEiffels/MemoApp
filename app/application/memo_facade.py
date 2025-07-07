@@ -2,7 +2,7 @@ from domain.member.member_service import MemberService
 from domain.memo.memo_service import MemoService
 from application.memo_facade_schemas import Criteria
 from application.memo_facade_schemas import Result
- 
+
 
 
 class MemoFacade:
@@ -11,12 +11,12 @@ class MemoFacade:
         self.member = member_service
     
     
-    def create_memo(self,criteria:Criteria.CreateMemo):
+    def create_memo(self,criteria:Criteria.CreateMemo) -> Result.CreateMemo:
         # exist member? 
         self.member.exist_member(criteria.member_id)
-
-        # 
-        self.memo.create_memo(criteria.to_command())
+        #  create memo
+        created_memo = self.memo.create_memo(criteria.to_command())
+        return Result.CreateMemo(created_memo.id)
 
 
         
