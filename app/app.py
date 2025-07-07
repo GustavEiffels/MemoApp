@@ -4,6 +4,14 @@ from contextlib import contextmanager, asynccontextmanager
 from sqlalchemy import text 
 import models  
 
+from domain.member.member_repository import MemberRepositoryInterface
+from domain.member.member_schema import MemberCreate
+from domain.member.member import Member
+from infra.member.sqlalchemy_member_repository import SQLAlchemyMemberRepository
+from sqlalchemy.orm import Session
+from database import get_db
+from typing import Annotated
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,3 +38,20 @@ async def lifespan(app: FastAPI):
     print("DB 엔진 연결 풀 닫힘.")
 
 app = FastAPI(lifespan=lifespan)
+
+
+def get_member_repository(db: Session = Depends(get_db)) -> MemberRepositoryInterface:
+    return SQLAlchemyMemberRepository(db) 
+
+
+
+@app.get('/test')
+def create_test(
+    member_repo: Annotated[MemberRepositoryInterface, Depends(get_member_repository)]
+):
+    new_member = Member(
+        email='test@naver.com',
+        password_hash='Qwer!@34!',
+    )
+
+    member_repo.add(new_member)

@@ -1,33 +1,56 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
+from domain.member.member import Member
 
 
-class Member(Base):
+class MemberEntity(Base):
     __tablename__ = "Members"
     id = Column(Integer,primary_key=True,index=True)
     email = Column(String(50), unique=True, index=True, nullable=False)
     password = Column(String(50), nullable=False)
-    super_member = Column(Boolean, default=False)
-    createAt = Column(DateTime, nullable=False)
-    updateAt = Column(DateTime, nullable=False)
-    deleteAt = Column(DateTime, nullable=True)
+    is_super_member = Column(Boolean, default=False)
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
 
-class Memo(Base):
+    @classmethod
+    def from_domain(cls, domain_member: Member) -> "MemberEntity":
+        return cls(
+            id=domain_member.id,
+            email=domain_member.email,
+            password=domain_member.password_hash,
+            is_super_member=domain_member.is_super_member,
+            created_at=domain_member.created_at,
+            updated_at=domain_member.updated_at,
+            deleted_at=domain_member.deleted_at
+        )
+    
+    def to_domain(self) -> Member:
+        return Member(
+            id=self.id,
+            email=self.email,
+            password_hash=self.password,
+            is_super_member=self.is_super_member,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+            deleted_at=self.deleted_at
+        )
+
+
+class MemoEntity(Base):
     __tablename__ = "Memos"
     id = Column(Integer, primary_key=True, index=True)
     contents = Column(String(2000), nullable=True)
     summary  = Column(String(500), nullable=True)
     member_id = Column(Integer, nullable=False, index=True)
-    createAt = Column(DateTime, nullable=False)
-    updateAt = Column(DateTime, nullable=False)
-    deleteAt = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False)
+    update_at = Column(DateTime, nullable=False)
+    delete_at = Column(DateTime, nullable=True)
 
 
-class Role(Base):
+class RoleEntity(Base):
     __tablename__ = "Roles"
     id = Column(Integer, primary_key=True, index=True)
-    member_id = Column(Integer, ForeignKey('members.id'), nullable=False, index=True)
-    memo_id = Column(Integer, ForeignKey('memos.id'), nullable=False, index=True)
-    member = relationship("Member", back_populates="member_memo_roles")
-    memo = relationship("Memo", back_populates="member_memo_roles")
+    member_id = Column(Integer, nullable=False, index=True)
+    memo_id = Column(Integer, nullable=False, index=True)
