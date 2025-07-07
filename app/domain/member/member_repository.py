@@ -8,10 +8,11 @@ class MemberRepositoryInterface(ABC):
     def add(self, member:Member) -> Member:
         pass
 
-    # @abstractmethod
-    # def find_by_id(self,member_id:int) -> Optional[Member]:
-    #     pass
     
     @abstractmethod
     def find_by_email(self,email:str) -> Optional[Member]:
+        pass
+
+    @abstractmethod
+    def find_by_id(self,id:int)->Optional[Member]:
         pass

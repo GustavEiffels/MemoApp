@@ -24,3 +24,10 @@ class SQLAlchemyMemberRepository(MemberRepositoryInterface):
         if member_entity:
             return member_entity.to_domain()
         return None
+    
+
+    def find_by_id(self, id) -> Optional[Member]:
+        member_entity = self.db_session.query(MemberEntity).filter(MemberEntity.id == id).first()
+        if member_entity:
+            return member_entity.to_domain()
+        return None        

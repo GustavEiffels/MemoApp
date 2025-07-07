@@ -16,3 +16,4 @@ class MemoService:
         )
 
         return self.repo.add(new_memo)
+    

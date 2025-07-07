@@ -13,6 +13,9 @@ class InvalidError(ApplicationException):
 class MemberAlreadyExistsError(ApplicationException):
     pass 
 
+class NotFoundMember(ApplicationException):
+    pass
+
 class DuplicationError(ApplicationException):
     """중복된 항목이 존재할 때 발생하는 예외."""
     pass 
