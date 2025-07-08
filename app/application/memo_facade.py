@@ -14,7 +14,7 @@ class MemoFacade:
     def create_memo(self,criteria:Criteria.CreateMemo) -> Result.CreateMemo:
         # exist member? 
         self.member.exist_member(criteria.member_id)
-        #  create memo
+        #  create memo_app
         created_memo = self.memo.create_memo(criteria.to_command())
         return Result.CreateMemo(created_memo.id)
 
