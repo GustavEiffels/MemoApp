@@ -9,4 +9,5 @@ class MemberService:
         self.repository = repository
 
     def create_member(self, create_member: MemberCreate) -> Member:
-        self.repository.create(create_member.to_domain())
+        created_member = self.repository.create(create_member.to_domain())
+        return created_member

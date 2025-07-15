@@ -7,7 +7,7 @@ from app.domain.member.member_repository import MemberRepository
 class SQLAlchemyMemberRepository(MemberRepository):
 
     def create(self, member_data: Member) -> Member:
-        new_member = Member(member_data)
+        new_member = member_data
         self.session.add(new_member)
         self.session.commit()
         self.session.refresh(new_member)

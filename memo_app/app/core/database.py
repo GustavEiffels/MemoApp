@@ -1,23 +1,21 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from config import Settings
+from sqlalchemy.orm import sessionmaker, declarative_base
+from .config import settings as app_settings
 
-
-SQLALCHEMY_DATABASE_URI = Settings.database_uri
+SQLALCHEMY_DATABASE_URI = app_settings.DATABASE_URL
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI, pool_recycle=500, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def get_db():
-    db = SessionLocal() # ORM 객체
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-def get_raw_db_connection(): # DB 연결 객체를 직접 제공
+def get_raw_db_connection():
     conn = engine.connect()
     try:
         yield conn

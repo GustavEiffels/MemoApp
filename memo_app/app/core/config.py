@@ -1,18 +1,26 @@
-import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from dotenv import load_dotenv
-load_dotenv()
 
 class Settings(BaseSettings):
-    USER = os.getenv("MYSQL_USER")
-    PASSWORD = os.getenv("PASSWORD")
-    DB_URL = os.getenv("DB_URL")
-    DB_NAME = os.getenv("DB_NAME")
-    database_uri: str = f'mysql+pymysql://{USER}:{PASSWORD}@{DB_URL}/{DB_NAME}'
-    app_name: str = 'Memo'
+    MYSQL_USER: str = "myuser"
+    MYSQL_PASSWORD: str = "mypassword"
+    MYSQL_HOST: str = "localhost"
+    MYSQL_PORT: int = "33066"
+    MYSQL_DATABASE: str = "mydb"
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = 'utf-8'
+    APP_NAME: str = "memoApp"
+
+    @property
+    def DATABASE_URL(self) -> str:
+        return (
+            f"mysql+pymysql://"
+            f"{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@"
+            f"{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
+        )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding='utf-8',
+        extra='ignore'
+    )
 
 settings = Settings()
