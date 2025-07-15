@@ -8,5 +8,5 @@ class MemberCreate(BaseModel):
     nick: str
     password: str
 
-    def to_domain(self) -> Member:
-        return Member(email=self.email, nick=self.nick, password_hash=self.password)
+    def to_domain(self,password:str) -> Member:
+        return Member(email=self.email, nick=self.nick, password_hash=password)

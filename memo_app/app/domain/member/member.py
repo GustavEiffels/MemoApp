@@ -14,5 +14,11 @@ class Member(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
+
+    def change_password(self, password):
+        self.password_hash = password
+        return self
+
+
     def __repr__(self):
         return f"<Member(id={self.id}, nick='{self.nick}', email='{self.email}')>"
