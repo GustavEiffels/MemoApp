@@ -1,7 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from sqlalchemy import text
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from app.core.custom_exception import CustomBaseException
 from app.interfaces.member.controller import router as member_router
+from app.interfaces.memo.controller import router as memo_router
 from app.core.database import engine, Base
 
 @asynccontextmanager
@@ -26,6 +30,9 @@ async def lifespan(app: FastAPI):
 
     print("애플리케이션 종료 중... (lifespan shutdown event)")
 
+
+
+
 app = FastAPI(
     title="Memo App API",
     description="A simple API for managing members and potentially memos.",
@@ -35,8 +42,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-app.include_router(member_router)
+@app.exception_handler(CustomBaseException)
+async def custom_exception_handler(request: Request, exc: CustomBaseException):
+    print('test - done')
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail, "code": exc.status_code}
+    )
 
+
+app.include_router(member_router)
+app.include_router(memo_router)
 @app.get("/", status_code=status.HTTP_200_OK)
 async def root():
     return {"message": "Welcome to Memo App API! Visit /docs for API documentation."}
