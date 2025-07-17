@@ -28,3 +28,12 @@ class MemberService:
 
         created_member = self.repository.create(create_member.to_domain(hashed_password))
         return created_member
+
+
+    def get_member(self, member_id: int) -> Member:
+        member = self.repository.get_by_id(member_id)
+
+        if member is None:
+            raise CustomBaseException("Not Found Member by Member Id",status_code=status.HTTP_404_NOT_FOUND)
+
+        return member

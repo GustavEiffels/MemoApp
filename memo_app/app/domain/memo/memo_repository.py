@@ -2,7 +2,6 @@ import abc
 
 from app.domain.memo.memo import Memo
 
-
 class MemoRepository(abc.ABC):
 
     @abc.abstractmethod

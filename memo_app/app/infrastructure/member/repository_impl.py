@@ -1,7 +1,5 @@
 from typing import Optional
-
 from sqlalchemy.orm import Session
-
 from app.domain.member.member import Member
 from app.domain.member.member_repository import MemberRepository
 
@@ -16,7 +14,6 @@ class SQLAlchemyMemberRepository(MemberRepository):
 
     def find_by_email(self, email: str) -> Optional[Member]:
         return self.session.query(Member).filter(Member.email == email).first()
-
 
     def create(self, member_data: Member) -> Member:
         new_member = member_data
