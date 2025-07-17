@@ -15,7 +15,8 @@ class Memo(Base):
     contents = Column(String(2000), nullable=True)
     summary  = Column(String(500), nullable=True)
     member_id = Column(Integer, nullable=False, index=True)
-    # Time Setting 
+
+    # Time Setting
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now(), server_default=func.now(), nullable=False)
     def __repr__(self):
